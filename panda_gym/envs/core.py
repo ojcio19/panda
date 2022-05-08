@@ -98,8 +98,6 @@ class RobotTaskEnv(gym.GoalEnv):
         
         achieved_goal = self.task.get_achieved_goal()
 
-        # front_frame = self.sim.render(
-        #     width=300, height=200, camera_name='external_camera_0', depth=False)
         return {
             "observation": observation,
             "achieved_goal": achieved_goal,
