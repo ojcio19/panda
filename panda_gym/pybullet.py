@@ -201,7 +201,7 @@ class PyBullet:
 
             #if len(result[0]) == 0:
             #    return 45 - x_low, 120 - y_low
-            return np.mean(result[0]), np.mean(result[1])
+            return np.mean(result[0])/100, np.mean(result[1])/100
         if mode == "point_side":
             width = 120
             height = 90
@@ -236,7 +236,7 @@ class PyBullet:
 
             #if len(result[0]) == 0:
             #    return 45 - x_low, 120 - y_low
-            return np.mean(result[0]), np.mean(result[1])
+            return np.mean(result[0])/100, np.mean(result[1])/100
 
     def get_base_position(self, body):
         """Get the position of the body.

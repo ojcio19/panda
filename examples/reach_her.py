@@ -52,7 +52,7 @@ model = model_type(
 
 # LEARNING
 print("Starting learning")
-timesteps = 1000
+timesteps = 8000
 start = time.time()
 model.learn(timesteps)
 end = time.time()
@@ -101,7 +101,7 @@ for i_episode in range(1, total_episodes + 1):
 
         print("time side:", end2 - start)
         sum_time = sum_time + end2 - start
-        # plt.show()
+        plt.show()
 
         # PREDICT A MOVE
         action, _states = model.predict(observation)

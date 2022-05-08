@@ -71,8 +71,7 @@ class PyBulletRobot:
 
 
 class RobotTaskEnv(gym.GoalEnv):
-
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render.modes": ["human", "rgb_array", "point_front", "point_side"]}
 
     def __init__(self, seed=None):
         obs = self.reset()
@@ -94,10 +93,12 @@ class RobotTaskEnv(gym.GoalEnv):
     def _get_obs(self):
         robot_obs = self.robot.get_obs()  # robot state
         task_obs = self.task.get_obs()  # object position, velococity, etc...
-        observation = np.concatenate([robot_obs, task_obs])
-        
-        achieved_goal = self.task.get_achieved_goal()
+        # observation = np.concatenate([robot_obs, task_obs])
 
+        achieved_goal = self.task.get_achieved_goal()
+        side_img = self.sim.render(mode="point_side")
+        front_img = self.sim.render(mode="point_front")
+        observation = np.concatenate([side_img, front_img])  # task_obs,
         return {
             "observation": observation,
             "achieved_goal": achieved_goal,
