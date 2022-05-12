@@ -93,12 +93,9 @@ class RobotTaskEnv(gym.GoalEnv):
     def _get_obs(self):
         robot_obs = self.robot.get_obs()  # robot state
         task_obs = self.task.get_obs()  # object position, velococity, etc...
-        # observation = np.concatenate([robot_obs, task_obs])
+        observation = np.concatenate([robot_obs, task_obs])
 
         achieved_goal = self.task.get_achieved_goal()
-        side_img = self.sim.render(mode="point_side")
-        front_img = self.sim.render(mode="point_front")
-        observation = np.concatenate([side_img, front_img])  # task_obs,
         return {
             "observation": observation,
             "achieved_goal": achieved_goal,

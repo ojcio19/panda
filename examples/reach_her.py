@@ -52,7 +52,7 @@ model = model_type(
 
 # LEARNING
 print("Starting learning")
-timesteps = 8000
+timesteps = 200
 start = time.time()
 model.learn(timesteps)
 end = time.time()
@@ -84,7 +84,6 @@ y_highest, x_highest = -100, -100
 sum_time = 0
 for i_episode in range(1, total_episodes + 1):
     observation = env.reset()
-
     for t in range(1, pred_limit + 1):
         # SHOW CAMERA IMAGE
         img = env.render(mode="front")
@@ -106,6 +105,7 @@ for i_episode in range(1, total_episodes + 1):
         # PREDICT A MOVE
         action, _states = model.predict(observation)
         observation, reward, done, info = env.step(action)
+        print("Obse:", observation['observation'][3:])
         if reward > -5:
             total_success += 1
 

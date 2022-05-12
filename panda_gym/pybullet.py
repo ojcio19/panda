@@ -129,9 +129,9 @@ class PyBullet:
             width = 120
             height = 90
             view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(-0.0, 0.05, 0.1),
+                cameraTargetPosition=(0.0, 0.00, 0.05),
                 distance=0.5,
-                yaw=0,
+                yaw=90,
                 pitch=0,
                 roll=0,
                 upAxisIndex=2,
@@ -157,22 +157,11 @@ class PyBullet:
             rgb_array = rgb_array[:, :, :3]
             return rgb_array
         if mode == "point_front":
-            '''
-            width = 240
-            height = 180
-            view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(0.0, 0.0, 0.1),
-                distance=0.7,
-                yaw=90,
-                pitch=0,
-                roll=0,
-                upAxisIndex=2,
-            )'''
             width = 120
             height = 90
             view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(-0.27, 0.0, 0.1),
-                distance=0.7,
+                cameraTargetPosition=(0.0, 0.00, 0.05),
+                distance=0.5,
                 yaw=90,
                 pitch=0,
                 roll=0,
@@ -186,12 +175,6 @@ class PyBullet:
                 height=height,
                 viewMatrix=view_matrix,
                 projectionMatrix=proj_matrix,
-                # lightDirection=[1.0, -0.9, 2.0],
-                # lightColor=[1.0, 1.0, 1.0],
-                # lightDistance=1,
-                # lightAmbientCoeff=0.3,
-                # lightDiffuseCoeff=0.7,
-                # lightSpecularCoeff=0.7,
             )
             #
             rgb_array = np.array(px, dtype=np.uint8)
@@ -201,12 +184,12 @@ class PyBullet:
 
             #if len(result[0]) == 0:
             #    return 45 - x_low, 120 - y_low
-            return np.mean(result[0])/100, np.mean(result[1])/100
+            return np.mean(result[0]), np.mean(result[1])
         if mode == "point_side":
             width = 120
             height = 90
             view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(-0.0, 0.1, 0.1),
+                cameraTargetPosition=(0.0, -0.05, 0.05),
                 distance=0.5,
                 yaw=0,
                 pitch=0,
@@ -221,12 +204,6 @@ class PyBullet:
                 height=height,
                 viewMatrix=view_matrix,
                 projectionMatrix=proj_matrix,
-                # lightDirection=[1.0, -0.9, 2.0],
-                # lightColor=[1.0, 1.0, 1.0],
-                # lightDistance=1,
-                # lightAmbientCoeff=0.3,
-                # lightDiffuseCoeff=0.7,
-                # lightSpecularCoeff=0.7,
             )
 
             rgb_array = np.array(px, dtype=np.uint8)
@@ -236,7 +213,7 @@ class PyBullet:
 
             #if len(result[0]) == 0:
             #    return 45 - x_low, 120 - y_low
-            return np.mean(result[0])/100, np.mean(result[1])/100
+            return np.mean(result[0]), np.mean(result[1])
 
     def get_base_position(self, body):
         """Get the position of the body.
