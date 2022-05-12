@@ -178,13 +178,25 @@ class PyBullet:
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
             rgb_array = rgb_array[:-30, :, :3]
-            result = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
+            result_ball = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
-            if len(result[0]) == 0:
-                result = (np.array([10], dtype=np.uint8), result[1])
-            if len(result[1]) == 0:
-                result = (result[0], np.array([60], dtype=np.uint8))
-            return -1*(np.mean(result[0])-35), (np.mean(result[1]) - 60) #-1*(np.mean(result[0])-30)
+            robot_points = np.where((rgb_array[:, :, 1] <= 90) &
+                                    (rgb_array[:, :, 1] >= 75) &
+                                    (rgb_array[:, :, 2] <= 90) &
+                                    (rgb_array[:, :, 2] >= 75))
+
+            index = np.argmax(robot_points[0])
+            result_robot = max(robot_points[0]), robot_points[1][index] + 1
+            shifted_robot = -1 * (np.mean(result_robot[0]) - 30), (np.mean(result_robot[1]) - 60)
+
+            if len(result_ball[0]) == 0:
+                result_ball = (np.array([10], dtype=np.uint8), result_ball[1])
+            if len(result_ball[1]) == 0:
+                result_ball = (result_ball[0], np.array([60], dtype=np.uint8))
+
+            shifted_ball = -1 * (np.mean(result_ball[0]) - 35), (np.mean(result_ball[1]) - 60)
+
+            return np.concatenate([shifted_ball, shifted_robot])
         if mode == "point_side":
             width = 120
             height = 90
@@ -209,13 +221,23 @@ class PyBullet:
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
             rgb_array = rgb_array[:-30, :, :3]
-            result = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
+            result_ball = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
-            if len(result[0]) == 0:
-                result = (np.array([10], dtype=np.uint8), result[1])
-            if len(result[1]) == 0:
-                result = (result[0], np.array([65], dtype=np.uint8))
-            return -1*(np.mean(result[0])-30), (np.mean(result[1])-60)
+            robot_points = np.where((rgb_array[:, :, 1] <= 90) &
+                                    (rgb_array[:, :, 1] >= 75) &
+                                    (rgb_array[:, :, 2] <= 90) &
+                                    (rgb_array[:, :, 2] >= 75))
+
+            result_robot = max(robot_points[0]), max(robot_points[1])
+            shifted_robot = -1 * (result_robot[0] - 30), result_robot[1] - 60
+
+            if len(result_ball[0]) == 0:
+                result_ball = (np.array([10], dtype=np.uint8), result_ball[1])
+            if len(result_ball[1]) == 0:
+                result_ball = (result_ball[0], np.array([65], dtype=np.uint8))
+
+            shifted_ball = -1 * (np.mean(result_ball[0]) - 30), (np.mean(result_ball[1]) - 60)
+            return np.concatenate([shifted_ball, shifted_robot])
 
     def get_base_position(self, body):
         """Get the position of the body.

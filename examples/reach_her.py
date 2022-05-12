@@ -4,11 +4,13 @@ import gym
 import torch as th
 from stable_baselines3.her import HerReplayBuffer
 import matplotlib.pyplot as plt
+from panda_gym.utils import distance
 
 import panda_gym
 from stable_baselines3 import SAC, HER, DQN, DDPG, TD3
 from stable_baselines3.sac import MlpPolicy
 import pandas
+import numpy as np
 
 if th.cuda.is_available():
     print("It works")
@@ -84,15 +86,18 @@ for i_episode in range(1, total_episodes + 1):
         # SHOW CAMERA IMAGE
         img = env.render(mode="front")
         plt.imshow(img)
-
-        start = time.time()
-        point_x_side, point_y = env.render(mode="point_side")
-        end = time.time()
-        point_x_front, point_z = env.render(mode="point_front")
-        end2 = time.time()
+        # start = time.time()
+        point_x_side, point_y, robot_x_side, robot_y = env.render(mode="point_side")
+        # end = time.time()
+        point_x_front, point_z, robot_x_front, robot_z = env.render(mode="point_front")
+        # end2 = time.time()
         point_x = float(((point_x_side + point_x_front) / 2))
-        ls = [point_x, point_y, point_z]
-        print("Calc:", ls)
+        robot_x = float(((robot_x_side + robot_x_front) / 2))
+
+        ball = np.array([point_x, point_y, point_z])
+        robot = np.array([robot_x, robot_y, robot_z])
+        print(distance(ball, robot))
+        # print("Calc:", ls)
         # SHOW COORDINATES OF TARGET
         # print("x:", point_z+75, "y:", point_x, "z:", point_y, "time side:", end2-start)
 
