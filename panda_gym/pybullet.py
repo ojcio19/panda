@@ -84,8 +84,6 @@ class PyBullet:
         Returns:
             An RGB array if mode is 'rgb_array'.
         """
-        x_low, x_high = 35, 115
-        y_low, y_high = 75, 165
 
         if mode == "human":
             p.configureDebugVisualizer(p.COV_ENABLE_SINGLE_STEP_RENDERING)
@@ -129,9 +127,9 @@ class PyBullet:
             width = 120
             height = 90
             view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(0.0, 0.00, 0.05),
+                cameraTargetPosition=(0.0, -0.05, 0.05),
                 distance=0.5,
-                yaw=90,
+                yaw=0,
                 pitch=0,
                 roll=0,
                 upAxisIndex=2,
@@ -154,7 +152,7 @@ class PyBullet:
 
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
-            rgb_array = rgb_array[:, :, :3]
+            rgb_array = rgb_array[:-30, :, :3]
             return rgb_array
         if mode == "point_front":
             width = 120
@@ -179,12 +177,14 @@ class PyBullet:
             #
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
-            rgb_array = rgb_array[:, :, :3]
+            rgb_array = rgb_array[:-30, :, :3]
             result = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
-            #if len(result[0]) == 0:
-            #    return 45 - x_low, 120 - y_low
-            return np.mean(result[0]), np.mean(result[1])
+            if len(result[0]) == 0:
+                result = (np.array([10], dtype=np.uint8), result[1])
+            if len(result[1]) == 0:
+                result = (result[0], np.array([60], dtype=np.uint8))
+            return -1*(np.mean(result[0])-35), (np.mean(result[1]) - 60) #-1*(np.mean(result[0])-30)
         if mode == "point_side":
             width = 120
             height = 90
@@ -208,12 +208,14 @@ class PyBullet:
 
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
-            rgb_array = rgb_array[:, :, :3]
+            rgb_array = rgb_array[:-30, :, :3]
             result = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
-            #if len(result[0]) == 0:
-            #    return 45 - x_low, 120 - y_low
-            return np.mean(result[0]), np.mean(result[1])
+            if len(result[0]) == 0:
+                result = (np.array([10], dtype=np.uint8), result[1])
+            if len(result[1]) == 0:
+                result = (result[0], np.array([65], dtype=np.uint8))
+            return -1*(np.mean(result[0])-30), (np.mean(result[1])-60)
 
     def get_base_position(self, body):
         """Get the position of the body.

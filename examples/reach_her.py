@@ -53,35 +53,31 @@ model = model_type(
 # LEARNING
 print("Starting learning")
 timesteps = 200
-start = time.time()
+# start = time.time()
 model.learn(timesteps)
-end = time.time()
-print("=== LEARN === {}".format(end - start))
+# end = time.time()
+# print("=== LEARN === {}".format(end - start))
 
 # SAVE RESULTS
-total_value, counter, result = 0.0, 0, []
-for i in model.ep_success_buffer:
-    total_value += i
-    counter += 1
-    result.append(total_value / counter)
-
-# TRANSFER RESULTS TO CSV
-df = pandas.DataFrame(data={arch_values: result})
-df.to_csv("result2.csv", sep=';', index=False)
-
-# SAVE MODEL
-model.save('reach_her_model')
-
-# LOAD SAVED MODEL
-model = model_type.load('reach_her_model', env=env)
+# total_value, counter, result = 0.0, 0, []
+# for i in model.ep_success_buffer:
+#     total_value += i
+#     counter += 1
+#     result.append(total_value / counter)
+#
+# # TRANSFER RESULTS TO CSV
+# df = pandas.DataFrame(data={arch_values: result})
+# df.to_csv("result2.csv", sep=';', index=False)
+#
+# # SAVE MODEL
+# model.save('reach_her_model')
+#
+# # LOAD SAVED MODEL
+# model = model_type.load('reach_her_model', env=env)
 
 # MAKE PREDICTIONS ON LEARNED MODEL
-total_episodes, reward, pred_limit = 4, 0, 1
-total_success = 0
+total_episodes, reward, pred_limit, total_success, sum_time = 4, 0, 1, 0, 0
 
-y_lowest, x_lowest = 100, 100
-y_highest, x_highest = -100, -100
-sum_time = 0
 for i_episode in range(1, total_episodes + 1):
     observation = env.reset()
     for t in range(1, pred_limit + 1):
@@ -94,12 +90,14 @@ for i_episode in range(1, total_episodes + 1):
         end = time.time()
         point_x_front, point_z = env.render(mode="point_front")
         end2 = time.time()
-        point_x = float(((point_x_side + point_x_front) / 2) + 35)
+        point_x = float(((point_x_side + point_x_front) / 2))
+        ls = [point_x, point_y, point_z]
+        print("Calc:", ls)
         # SHOW COORDINATES OF TARGET
         # print("x:", point_z+75, "y:", point_x, "z:", point_y, "time side:", end2-start)
 
-        print("time side:", end2 - start)
-        sum_time = sum_time + end2 - start
+        # print("time side:", end2 - start)
+        # sum_time = sum_time + end2 - start
         plt.show()
 
         # PREDICT A MOVE
