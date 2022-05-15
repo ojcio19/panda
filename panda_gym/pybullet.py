@@ -223,11 +223,14 @@ class PyBullet:
             rgb_array = rgb_array[:-30, :, :3]
             result_ball = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
-            robot_points = np.where((rgb_array[:, :, 1] <= 90) &
-                                    (rgb_array[:, :, 1] >= 75) &
-                                    (rgb_array[:, :, 2] <= 90) &
-                                    (rgb_array[:, :, 2] >= 75))
-
+            robot_points = np.where((rgb_array[:, :, 1] <= 155) &    # 90 - 75
+                                    (rgb_array[:, :, 1] >= 150) &
+                                    (rgb_array[:, :, 2] <= 155) &
+                                    (rgb_array[:, :, 2] >= 150))
+            if len(robot_points[0]) == 0:
+                robot_points[0] = (0, robot_points[1])
+            if len(robot_points[1]) == 0:
+                robot_points[1] = (robot_points[0], 0)
             result_robot = max(robot_points[0]), max(robot_points[1])
             shifted_robot = -1 * (result_robot[0] - 30), result_robot[1] - 60
 
