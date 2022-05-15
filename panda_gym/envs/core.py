@@ -93,13 +93,27 @@ class RobotTaskEnv(gym.GoalEnv):
     def _get_obs(self):
         robot_obs = self.robot.get_obs()  # robot state
         task_obs = self.task.get_obs()  # object position, velococity, etc...
+
+        point_x_side, point_y, robot_x_side, robot_y = self.sim.render(mode="point_side")
+        point_x_front, point_z, robot_x_front, robot_z = self.sim.render(mode="point_front")
+
+        point_x = float(((point_x_side + point_x_front) / 2))
+        robot_x = float(((robot_x_side + robot_x_front) / 2))
+        lst = [point_x, point_y, point_z]
+        ball = np.array(lst)
+        lst = [robot_x, robot_y, robot_z]
+        robot = np.array(lst)
+
+        velocity = robot_obs[3:]
+        robot_obs = np.concatenate([robot, velocity])
+
         observation = np.concatenate([robot_obs, task_obs])
 
         achieved_goal = self.task.get_achieved_goal()
         return {
             "observation": observation,
             "achieved_goal": achieved_goal,
-            "desired_goal": self.task.get_goal(),
+            "desired_goal": ball,  # self.task.get_goal(),
         }
 
     def reset(self):
@@ -115,11 +129,11 @@ class RobotTaskEnv(gym.GoalEnv):
         done = False
         info = {
             "is_success": self.task.is_success(
-                obs["achieved_goal"], self.task.get_goal()
+                obs["achieved_goal"], obs["desired_goal"]  # self.task.get_goal()
             ),
         }
         reward = self.task.compute_reward(
-            obs["achieved_goal"], self.task.get_goal(), info
+            obs["achieved_goal"], obs["desired_goal"], info  # self.task.get_goal()
         )
         return obs, reward, done, info
 
