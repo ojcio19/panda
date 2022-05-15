@@ -187,14 +187,14 @@ class PyBullet:
 
             index = np.argmax(robot_points[0])
             result_robot = max(robot_points[0]), robot_points[1][index] + 1
-            shifted_robot = -1 * (np.mean(result_robot[0]) - 30), (np.mean(result_robot[1]) - 60)
+            shifted_robot = -1 * (np.mean(result_robot[0]) - 25)/180, (np.mean(result_robot[1]) - 30)/200
 
             if len(result_ball[0]) == 0:
                 result_ball = (np.array([10], dtype=np.uint8), result_ball[1])
             if len(result_ball[1]) == 0:
                 result_ball = (result_ball[0], np.array([60], dtype=np.uint8))
 
-            shifted_ball = -1 * (np.mean(result_ball[0]) - 35), (np.mean(result_ball[1]) - 60)
+            shifted_ball = -1 * (np.mean(result_ball[0]) - 25)/180, (np.mean(result_ball[1]) - 30)/200
 
             return np.concatenate([shifted_ball, shifted_robot])
         if mode == "point_side":
@@ -232,14 +232,14 @@ class PyBullet:
             if len(robot_points[1]) == 0:
                 robot_points[1] = (robot_points[0], 0)
             result_robot = max(robot_points[0]), max(robot_points[1])
-            shifted_robot = -1 * (result_robot[0] - 30), result_robot[1] - 60
+            shifted_robot = -1 * (result_robot[0] - 25)/180, (result_robot[1] - 60)/200
 
             if len(result_ball[0]) == 0:
                 result_ball = (np.array([10], dtype=np.uint8), result_ball[1])
             if len(result_ball[1]) == 0:
                 result_ball = (result_ball[0], np.array([65], dtype=np.uint8))
 
-            shifted_ball = -1 * (np.mean(result_ball[0]) - 30), (np.mean(result_ball[1]) - 60)
+            shifted_ball = -1 * (np.mean(result_ball[0]) - 25)/180, (np.mean(result_ball[1]) - 60)/200
             return np.concatenate([shifted_ball, shifted_robot])
 
     def get_base_position(self, body):

@@ -78,7 +78,7 @@ model.learn(timesteps)
 # model = model_type.load('reach_her_model', env=env)
 
 # MAKE PREDICTIONS ON LEARNED MODEL
-total_episodes, reward, pred_limit, total_success, sum_time = 1000, 0, 1, 0, 0
+total_episodes, reward, pred_limit, total_success, sum_time = 400, 0, 1, 0, 0
 
 x_ball, y_ball, z_ball = [], [], []
 x_ball_new, y_ball_new, z_ball_new = [], [], []
@@ -98,13 +98,14 @@ for i_episode in range(1, total_episodes + 1):
 
         ball = np.array([point_x, point_y, point_z])
         robot = np.array([robot_x, robot_y, robot_z])
-        if distance(ball, robot) < 8:
-            '''img = env.render(mode="front")
-            plt.imshow(img)'''
+        print(distance(ball, robot))
+        if distance(ball, robot) < 0.03:
+            img = env.render(mode="front")
+            plt.imshow(img)
             print("triggered!", distance(ball, robot))
-            '''print("ball:", ball)
-            print("robot", robot)
-            plt.show()'''
+            #print("ball:", ball)
+            #print("robot", robot)
+            plt.show()
         # print("Calc:", ls)
         # SHOW COORDINATES OF TARGET
         # print("x:", point_z+75, "y:", point_x, "z:", point_y, "time side:", end2-start)
