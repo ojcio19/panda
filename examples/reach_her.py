@@ -54,7 +54,7 @@ model = model_type(
 
 # LEARNING
 print("Starting learning")
-timesteps = 200
+timesteps = 2000
 # start = time.time()
 model.learn(timesteps)
 # end = time.time()
@@ -78,10 +78,11 @@ model.learn(timesteps)
 # model = model_type.load('reach_her_model', env=env)
 
 # MAKE PREDICTIONS ON LEARNED MODEL
-total_episodes, reward, pred_limit, total_success, sum_time = 400, 0, 1, 0, 0
+total_episodes, reward, pred_limit, total_success, sum_time = 20, 0, 30, 0, 0
 
 x_ball, y_ball, z_ball = [], [], []
 x_ball_new, y_ball_new, z_ball_new = [], [], []
+diff_y = []
 
 for i_episode in range(1, total_episodes + 1):
     observation = env.reset()
@@ -89,20 +90,26 @@ for i_episode in range(1, total_episodes + 1):
         # SHOW CAMERA IMAGE
 
         # start = time.time()
-        point_x_side, point_y, robot_x_side, robot_y = env.render(mode="point_side")
+        point_y, point_z, robot_y, robot_z = env.render(mode="point_side")
         # end = time.time()
-        point_x_front, point_z, robot_x_front, robot_z = env.render(mode="point_front")
+        _, point_x, _, robot_x = env.render(mode="point_front")
         # end2 = time.time()
-        point_x = float(((point_x_side + point_x_front) / 2))
-        robot_x = float(((robot_x_side + robot_x_front) / 2))
+        # diff_y.append(np.abs(point_y_side-point_y_front))
+        # point_y = float(((point_y_side + point_y_front) / 2))
+        # robot_x = float(((robot_x_side + robot_x_front) / 2))
 
         ball = np.array([point_x, point_y, point_z])
         robot = np.array([robot_x, robot_y, robot_z])
         print(distance(ball, robot))
-        if distance(ball, robot) < 0.03:
+        # img = env.render(mode="front")
+        # plt.imshow(img)
+        # print("robot", robot)
+        # plt.show()
+        if distance(ball, robot) < 0.05:
             img = env.render(mode="front")
             plt.imshow(img)
             print("triggered!", distance(ball, robot))
+            print("Coordinates!", 'b:', ball, 'r:', robot)
             #print("ball:", ball)
             #print("robot", robot)
             plt.show()
@@ -112,7 +119,6 @@ for i_episode in range(1, total_episodes + 1):
 
         # print("time side:", end2 - start)
         # sum_time = sum_time + end2 - start
-
 
         # PREDICT A MOVE
         x_ball.append(ball[0])
@@ -135,6 +141,8 @@ for i_episode in range(1, total_episodes + 1):
     print(f"Episode={i_episode}", "Success_rate = {:.2f}%".format(100 * total_success / total_episodes))
     reward = 0
     total_success = 0
+
+print("Diff y ball:", np.mean(diff_y), "Maks", max(diff_y))
 
 print("Max initial", 'x', max(x_ball), 'y', max(y_ball), 'z', max(z_ball))
 print("Min initial", 'x', min(x_ball), 'y', min(y_ball), 'z', min(z_ball))

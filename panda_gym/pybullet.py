@@ -5,6 +5,8 @@ import numpy as np
 import pybullet as p
 import pybullet_data
 
+import matplotlib.pyplot as plt
+
 
 class PyBullet:
     """Convenient class to use PyBullet physics engine.
@@ -32,6 +34,12 @@ class PyBullet:
 
         self.n_substeps = n_substeps
         self.timestep = 1.0 / 500
+        self.previous_x_robot = 0.0
+        self.previous_y_robot = 0.0
+        self.previous_z_robot = 0.0
+        self.previous_x_ball = 0.0
+        self.previous_y_ball = 0.0
+        self.previous_z_ball = 0.0
         p.setTimeStep(self.timestep)
         p.resetSimulation()
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -124,11 +132,11 @@ class PyBullet:
             rgb_array = rgb_array[:, :, :3]
             return rgb_array
         if mode == "front":
-            width = 120
-            height = 90
+            width = 240
+            height = 180
             view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(0.0, -0.05, 0.05),
-                distance=0.5,
+                cameraTargetPosition=(0.0, 0.00, 0.00),
+                distance=0.7,
                 yaw=0,
                 pitch=0,
                 roll=0,
@@ -152,14 +160,14 @@ class PyBullet:
 
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
-            rgb_array = rgb_array[:-30, :, :3]
+            rgb_array = rgb_array[:90, 20:-20, :3]
             return rgb_array
         if mode == "point_front":
-            width = 120
-            height = 90
+            width = 240
+            height = 180
             view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(0.0, 0.00, 0.05),
-                distance=0.5,
+                cameraTargetPosition=(0.0, 0.00, 0.00),
+                distance=0.7,
                 yaw=90,
                 pitch=0,
                 roll=0,
@@ -177,7 +185,7 @@ class PyBullet:
             #
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
-            rgb_array = rgb_array[:-30, :, :3]
+            rgb_array = rgb_array[:90, 20:-20, :3]
             result_ball = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
             robot_points = np.where((rgb_array[:, :, 1] <= 90) &
@@ -185,24 +193,36 @@ class PyBullet:
                                     (rgb_array[:, :, 2] <= 90) &
                                     (rgb_array[:, :, 2] >= 75))
 
-            index = np.argmax(robot_points[0])
-            result_robot = max(robot_points[0]), robot_points[1][index] + 1
-            shifted_robot = -1 * (np.mean(result_robot[0]) - 25)/180, (np.mean(result_robot[1]) - 30)/200
+            try:        # todo refactor robot get position
+                index = np.argmax(robot_points[0])
+            except ValueError:
+                print("argmax: something went wrong in argmax of: ", robot_points[0])
+                robot_points = np.array([self.previous_y_robot]), np.array([self.previous_x_robot])  # todo: fix this
+                index = 0
+            result_robot = max(robot_points[0]), robot_points[1][index]
+            #self.previous_y_robot = robot_points[0]
+            self.previous_x_robot = robot_points[1]
+            shifted_robot = -1 * (np.mean(result_robot[0]) - 45) / 200, (np.mean(result_robot[1]) - 100) / 200
 
-            if len(result_ball[0]) == 0:
-                result_ball = (np.array([10], dtype=np.uint8), result_ball[1])
-            if len(result_ball[1]) == 0:
-                result_ball = (result_ball[0], np.array([60], dtype=np.uint8))
+            if result_ball[0].size == 0 or result_ball[1].size == 0:
+                if self.previous_y_ball == 0.0 or self.previous_x_ball == 0.0:
+                    result_ball = max(robot_points[0]) - 40, max(robot_points[1])   # - 40 & -8 vals are middle of robot arm
+                else:
+                    result_ball = (self.previous_y_ball, self.previous_x_ball)
 
-            shifted_ball = -1 * (np.mean(result_ball[0]) - 25)/180, (np.mean(result_ball[1]) - 30)/200
+            self.previous_y_ball = np.mean(result_ball[0])
+            self.previous_x_ball = np.mean(result_ball[1])
 
+            #print("y:", -1 * (np.mean(result_ball[0]) - 45), "x:", np.mean(result_ball[1]) - 100)
+            #print("y:", -1 * (np.mean(result_robot[0]) - 45), "x:", np.mean(result_robot[0]) - 100)
+            shifted_ball = -1 * (np.mean(result_ball[0]) - 45)/200, (np.mean(result_ball[1]) - 100)/200
             return np.concatenate([shifted_ball, shifted_robot])
         if mode == "point_side":
-            width = 120
-            height = 90
+            width = 240
+            height = 180
             view_matrix = p.computeViewMatrixFromYawPitchRoll(
-                cameraTargetPosition=(0.0, -0.05, 0.05),
-                distance=0.5,
+                cameraTargetPosition=(0.0, 0.00, 0.00),
+                distance=0.7,
                 yaw=0,
                 pitch=0,
                 roll=0,
@@ -220,26 +240,33 @@ class PyBullet:
 
             rgb_array = np.array(px, dtype=np.uint8)
             rgb_array = np.reshape(rgb_array, (height, width, 4))
-            rgb_array = rgb_array[:-30, :, :3]
+            rgb_array = rgb_array[:90, 20:-20, :3]
             result_ball = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
             robot_points = np.where((rgb_array[:, :, 1] <= 155) &    # 90 - 75
                                     (rgb_array[:, :, 1] >= 150) &
                                     (rgb_array[:, :, 2] <= 155) &
                                     (rgb_array[:, :, 2] >= 150))
-            if len(robot_points[0]) == 0:
-                robot_points[0] = (0, robot_points[1])
-            if len(robot_points[1]) == 0:
-                robot_points[1] = (robot_points[0], 0)
-            result_robot = max(robot_points[0]), max(robot_points[1])
-            shifted_robot = -1 * (result_robot[0] - 25)/180, (result_robot[1] - 60)/200
 
-            if len(result_ball[0]) == 0:
-                result_ball = (np.array([10], dtype=np.uint8), result_ball[1])
-            if len(result_ball[1]) == 0:
-                result_ball = (result_ball[0], np.array([65], dtype=np.uint8))
+            if robot_points[0].size == 0 or robot_points[1].size == 0:
+                robot_points = np.array([self.previous_y_robot]), np.array([self.previous_z_robot])
 
-            shifted_ball = -1 * (np.mean(result_ball[0]) - 25)/180, (np.mean(result_ball[1]) - 60)/200
+            index = np.argmax(robot_points[0])
+            result_robot = max(robot_points[0]), robot_points[1][index] #
+            self.previous_x_robot = robot_points[0]
+            self.previous_y_robot = robot_points[1]
+            shifted_robot = -1 * (result_robot[0] - 45)/200, (result_robot[1] - 100)/200
+
+            if result_ball[0].size == 0 or result_ball[1].size == 0:
+                if self.previous_y_ball == 0.0 or self.previous_z_ball == 0.0:
+                    result_ball = max(robot_points[0]) - 40, max(robot_points[1]) - 8   # - 40 & -8 vals are middle of robot arm
+                else:
+                    result_ball = (self.previous_y_ball, self.previous_z_ball)
+            self.previous_y_ball = np.mean(result_ball[0])
+            self.previous_z_ball = np.mean(result_ball[1])
+
+            #print("y:", -1 * np.mean(result_robot[0] - 45), "z:", np.mean(result_robot[1] - 100))
+            shifted_ball = -1 * (np.mean(result_ball[0]) - 45)/200, (np.mean(result_ball[1]) - 100)/200 # y - 45, z - 100
             return np.concatenate([shifted_ball, shifted_robot])
 
     def get_base_position(self, body):

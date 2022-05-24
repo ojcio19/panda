@@ -94,16 +94,18 @@ class RobotTaskEnv(gym.GoalEnv):
         robot_obs = self.robot.get_obs()  # robot state
         task_obs = self.task.get_obs()  # object position, velococity, etc...
 
-        point_x_side, point_y, robot_x_side, robot_y = self.sim.render(mode="point_side")
-        point_x_front, point_z, robot_x_front, robot_z = self.sim.render(mode="point_front")
+        point_y, point_z, robot_y, robot_z = self.sim.render(mode="point_side")
+        _, point_x, _, robot_x = self.sim.render(mode="point_front")
 
-        point_x = float(((point_x_side + point_x_front) / 2))
-        robot_x = float(((robot_x_side + robot_x_front) / 2))
+        # point_x = float(((point_x_side + point_x_front) / 2))
+        # robot_x = float(((robot_x_side + robot_x_front) / 2))
         lst = [point_x, point_y, point_z]
         ball = np.array(lst)
-        lst = [robot_x, robot_y, robot_z]
-        robot = np.array(lst)
-
+        try:
+            lst = [robot_x, robot_y, robot_z]
+            robot = np.array(lst)
+        except ValueError:
+            print(point_x, point_y, point_z, "Robot:", robot_x, robot_y, robot_z)
         velocity = robot_obs[3:]
         robot_obs = np.concatenate([robot, velocity])
 
