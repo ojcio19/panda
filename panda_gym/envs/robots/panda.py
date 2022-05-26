@@ -39,7 +39,7 @@ class Panda(PyBulletRobot):
     def set_action(self, action):
         action = action.copy()  # ensure action don't change
         action = np.clip(action, self.action_space.low, self.action_space.high)
-        ee_ctrl = action[:3] * 0.05  # limit maximum change in position
+        ee_ctrl = action[:3] * 0.04  # limit maximum change in position
         # get the current position and the target position
         ee_position = self.get_ee_position()
         target_ee_position = ee_position + ee_ctrl

@@ -10,7 +10,7 @@ class Reach(Task):
         sim,
         get_ee_position,
         reward_type="sparse",
-        distance_threshold=0.05,
+        distance_threshold=5.0,
         goal_range=0.3,
         seed=None,
     ):

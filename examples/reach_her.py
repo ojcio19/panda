@@ -47,14 +47,14 @@ model = model_type(
     buffer_size=100000,
     batch_size=256,
     learning_rate=learning_rate,
-    learning_starts=1000,
+    learning_starts=100,
     gamma=gamma,
     policy_kwargs=policy_kwargs
 )
 
 # LEARNING
 print("Starting learning")
-timesteps = 2000
+timesteps = 200
 # start = time.time()
 model.learn(timesteps)
 # end = time.time()
@@ -78,7 +78,7 @@ model.learn(timesteps)
 # model = model_type.load('reach_her_model', env=env)
 
 # MAKE PREDICTIONS ON LEARNED MODEL
-total_episodes, reward, pred_limit, total_success, sum_time = 20, 0, 30, 0, 0
+total_episodes, reward, pred_limit, total_success, sum_time = 20, 0, 5, 0, 0
 
 x_ball, y_ball, z_ball = [], [], []
 x_ball_new, y_ball_new, z_ball_new = [], [], []
@@ -100,16 +100,17 @@ for i_episode in range(1, total_episodes + 1):
 
         ball = np.array([point_x, point_y, point_z])
         robot = np.array([robot_x, robot_y, robot_z])
+
         print(distance(ball, robot))
         # img = env.render(mode="front")
         # plt.imshow(img)
         # print("robot", robot)
         # plt.show()
-        if distance(ball, robot) < 0.05:
+        if distance(ball, robot) < 20:
             img = env.render(mode="front")
             plt.imshow(img)
-            print("triggered!", distance(ball, robot))
-            print("Coordinates!", 'b:', ball, 'r:', robot)
+            #print("triggered!", distance(ball, robot))
+            #print("Coordinates!", 'b:', ball, 'r:', robot)
             #print("ball:", ball)
             #print("robot", robot)
             plt.show()
@@ -141,14 +142,6 @@ for i_episode in range(1, total_episodes + 1):
     print(f"Episode={i_episode}", "Success_rate = {:.2f}%".format(100 * total_success / total_episodes))
     reward = 0
     total_success = 0
-
-print("Diff y ball:", np.mean(diff_y), "Maks", max(diff_y))
-
-print("Max initial", 'x', max(x_ball), 'y', max(y_ball), 'z', max(z_ball))
-print("Min initial", 'x', min(x_ball), 'y', min(y_ball), 'z', min(z_ball))
-
-print("Max new", 'x', max(x_ball_new), 'y', max(y_ball_new), 'z', max(z_ball_new))
-print("Min new", 'x', min(x_ball_new), 'y', min(y_ball_new), 'z', min(z_ball_new))
 
 print("RES TIME", sum_time / total_episodes, "in total:", sum_time)
 env.close()

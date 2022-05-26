@@ -193,29 +193,30 @@ class PyBullet:
                                     (rgb_array[:, :, 2] <= 90) &
                                     (rgb_array[:, :, 2] >= 75))
 
-            try:        # todo refactor robot get position
+            if robot_points[0].size == 0.0:
+                result_robot = self.previous_y_robot[0], self.previous_x_robot[0]
+                print("Robot not found: taking old yx", result_robot)
+            else:   # todo: check robot_points[0][index] instead of max(robot_points[0])
                 index = np.argmax(robot_points[0])
-            except ValueError:
-                print("argmax: something went wrong in argmax of: ", robot_points[0])
-                robot_points = np.array([self.previous_y_robot]), np.array([self.previous_x_robot])  # todo: fix this
-                index = 0
-            result_robot = max(robot_points[0]), robot_points[1][index]
-            #self.previous_y_robot = robot_points[0]
-            self.previous_x_robot = robot_points[1]
-            shifted_robot = -1 * (np.mean(result_robot[0]) - 45) / 200, (np.mean(result_robot[1]) - 100) / 200
+                result_robot = robot_points[0][index], robot_points[1][index]
 
+            #print("robot x:", result_robot[1])
+            self.previous_x_robot = result_robot[1]
+            #shifted_robot = -1 * (np.mean(result_robot[0]) - 45) / 200, (np.mean(result_robot[1]) - 100) / 200
+            shifted_robot = np.mean(result_robot[0]), np.mean(result_robot[1])
+            ''''''''''''''''''''''''
             if result_ball[0].size == 0 or result_ball[1].size == 0:
                 if self.previous_y_ball == 0.0 or self.previous_x_ball == 0.0:
-                    result_ball = max(robot_points[0]) - 40, max(robot_points[1])   # - 40 & -8 vals are middle of robot arm
+                    result_ball = max(robot_points[0]) - 40, max(
+                        robot_points[1])  # - 40 & -8 vals are middle of robot arm
                 else:
                     result_ball = (self.previous_y_ball, self.previous_x_ball)
 
             self.previous_y_ball = np.mean(result_ball[0])
             self.previous_x_ball = np.mean(result_ball[1])
-
-            #print("y:", -1 * (np.mean(result_ball[0]) - 45), "x:", np.mean(result_ball[1]) - 100)
-            #print("y:", -1 * (np.mean(result_robot[0]) - 45), "x:", np.mean(result_robot[0]) - 100)
-            shifted_ball = -1 * (np.mean(result_ball[0]) - 45)/200, (np.mean(result_ball[1]) - 100)/200
+            #print("ball x:", self.previous_x_ball)
+            #shifted_ball = -1 * (np.mean(result_ball[0]) - 45) / 200, (np.mean(result_ball[1]) - 100) / 200
+            shifted_ball = np.mean(result_ball[0]), np.mean(result_ball[1])
             return np.concatenate([shifted_ball, shifted_robot])
         if mode == "point_side":
             width = 240
@@ -243,30 +244,35 @@ class PyBullet:
             rgb_array = rgb_array[:90, 20:-20, :3]
             result_ball = np.where((rgb_array[:, :, 1] <= 30) & (rgb_array[:, :, 2] <= 30))
 
-            robot_points = np.where((rgb_array[:, :, 1] <= 155) &    # 90 - 75
+            robot_points = np.where((rgb_array[:, :, 1] <= 155) &  # 90 - 75
                                     (rgb_array[:, :, 1] >= 150) &
                                     (rgb_array[:, :, 2] <= 155) &
                                     (rgb_array[:, :, 2] >= 150))
 
-            if robot_points[0].size == 0 or robot_points[1].size == 0:
-                robot_points = np.array([self.previous_y_robot]), np.array([self.previous_z_robot])
-
-            index = np.argmax(robot_points[0])
-            result_robot = max(robot_points[0]), robot_points[1][index] #
-            self.previous_x_robot = robot_points[0]
-            self.previous_y_robot = robot_points[1]
-            shifted_robot = -1 * (result_robot[0] - 45)/200, (result_robot[1] - 100)/200
-
+            if robot_points[0].size == 0.0:
+                result_robot = self.previous_y_robot, self.previous_z_robot
+                print("Robot not found: taking old yz", result_robot)
+            else:   # todo: check robot_points[0][index] instead of max(robot_points[0])
+                index = np.argmax(robot_points[0])
+                result_robot = robot_points[0][index], robot_points[1][index]
+            #print("robot y:", result_robot[0], "z:", result_robot[1])
+            self.previous_y_robot = result_robot[0]
+            self.previous_z_robot = result_robot[1]
+            #print("previous y:", self.previous_y_robot)
+            #shifted_robot = -1 * (result_robot[0] - 45) / 200, (result_robot[1] - 100) / 200
+            shifted_robot = result_robot[0], result_robot[1]
+            ''''''''''''''''''''''''
             if result_ball[0].size == 0 or result_ball[1].size == 0:
                 if self.previous_y_ball == 0.0 or self.previous_z_ball == 0.0:
-                    result_ball = max(robot_points[0]) - 40, max(robot_points[1]) - 8   # - 40 & -8 vals are middle of robot arm
+                    result_ball = max(robot_points[0]) - 40, max(
+                        robot_points[1]) - 8  # - 40 & -8 vals are middle of robot arm
                 else:
                     result_ball = (self.previous_y_ball, self.previous_z_ball)
             self.previous_y_ball = np.mean(result_ball[0])
             self.previous_z_ball = np.mean(result_ball[1])
-
-            #print("y:", -1 * np.mean(result_robot[0] - 45), "z:", np.mean(result_robot[1] - 100))
-            shifted_ball = -1 * (np.mean(result_ball[0]) - 45)/200, (np.mean(result_ball[1]) - 100)/200 # y - 45, z - 100
+            #print("ball y:", self.previous_y_ball, "z:", self.previous_z_ball)
+            #shifted_ball = -1 * (np.mean(result_ball[0]) - 45) / 200, (np.mean(result_ball[1]) - 100) / 200
+            shifted_ball = np.mean(result_ball[0]) , np.mean(result_ball[1])
             return np.concatenate([shifted_ball, shifted_robot])
 
     def get_base_position(self, body):

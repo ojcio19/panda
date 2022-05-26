@@ -106,6 +106,10 @@ class RobotTaskEnv(gym.GoalEnv):
             robot = np.array(lst)
         except ValueError:
             print(point_x, point_y, point_z, "Robot:", robot_x, robot_y, robot_z)
+
+        if ball.shape[0] != 3 or robot.shape[0] != 3:
+            print("Fatal error shapes ball", ball.shape, "robot", robot.shape)
+
         velocity = robot_obs[3:]
         robot_obs = np.concatenate([robot, velocity])
 
