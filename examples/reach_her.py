@@ -47,29 +47,31 @@ model = model_type(
     buffer_size=100000,
     batch_size=256,
     learning_rate=learning_rate,
-    learning_starts=100,
+    learning_starts=1000,
     gamma=gamma,
     policy_kwargs=policy_kwargs
 )
 
 # LEARNING
 print("Starting learning")
-timesteps = 200
-# start = time.time()
+timesteps = 8000
+start = time.time()
 model.learn(timesteps)
-# end = time.time()
-# print("=== LEARN === {}".format(end - start))
+end = time.time()
+print("=== LEARN === {}".format(end - start))
 
 # SAVE RESULTS
-# total_value, counter, result = 0.0, 0, []
-# for i in model.ep_success_buffer:
-#     total_value += i
-#     counter += 1
-#     result.append(total_value / counter)
-#
-# # TRANSFER RESULTS TO CSV
-# df = pandas.DataFrame(data={arch_values: result})
-# df.to_csv("result2.csv", sep=';', index=False)
+total_value, counter, result = 0.0, 0, []
+
+for i in model.ep_success_buffer:
+    total_value += i
+    counter += 1
+    result.append(total_value / counter)
+    print("Counter:", counter, "Success buffer latest value", i, "Average:", result[-1])
+
+# TRANSFER RESULTS TO CSV
+df = pandas.DataFrame(data={arch_values: result})
+df.to_csv("result2.csv", sep=';', index=False)
 #
 # # SAVE MODEL
 # model.save('reach_her_model')
@@ -78,7 +80,7 @@ model.learn(timesteps)
 # model = model_type.load('reach_her_model', env=env)
 
 # MAKE PREDICTIONS ON LEARNED MODEL
-total_episodes, reward, pred_limit, total_success, sum_time = 20, 0, 5, 0, 0
+total_episodes, reward, pred_limit, total_success, sum_time = 20, 0, 8, 0, 0
 
 x_ball, y_ball, z_ball = [], [], []
 x_ball_new, y_ball_new, z_ball_new = [], [], []
@@ -109,10 +111,10 @@ for i_episode in range(1, total_episodes + 1):
         if distance(ball, robot) < 20:
             img = env.render(mode="front")
             plt.imshow(img)
-            #print("triggered!", distance(ball, robot))
-            #print("Coordinates!", 'b:', ball, 'r:', robot)
-            #print("ball:", ball)
-            #print("robot", robot)
+            # print("triggered!", distance(ball, robot))
+            # print("Coordinates!", 'b:', ball, 'r:', robot)
+            # print("ball:", ball)
+            # print("robot", robot)
             plt.show()
         # print("Calc:", ls)
         # SHOW COORDINATES OF TARGET

@@ -97,8 +97,8 @@ class RobotTaskEnv(gym.GoalEnv):
         point_y, point_z, robot_y, robot_z = self.sim.render(mode="point_side")
         _, point_x, _, robot_x = self.sim.render(mode="point_front")
 
-        ball = np.array([point_x, point_y, point_z])
-        robot = np.array([robot_x, robot_y, robot_z])
+        ball = np.array([point_z, point_x, point_y])
+        robot = np.array([robot_z, robot_x, robot_y])
 
         if ball.shape[0] != 3 or robot.shape[0] != 3:
             print("Fatal error shapes ball", ball.shape, "robot", robot.shape)
@@ -110,6 +110,8 @@ class RobotTaskEnv(gym.GoalEnv):
         observation = np.concatenate([robot_obs, task_obs])
 
         achieved_goal = self.task.get_achieved_goal()
+
+        #print("robot_obs[0:3]:", self.robot.get_obs()[0:3], "robot:", robot)
         return {
             "observation": observation,
             "achieved_goal": achieved_goal,
