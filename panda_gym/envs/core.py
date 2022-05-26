@@ -97,18 +97,12 @@ class RobotTaskEnv(gym.GoalEnv):
         point_y, point_z, robot_y, robot_z = self.sim.render(mode="point_side")
         _, point_x, _, robot_x = self.sim.render(mode="point_front")
 
-        # point_x = float(((point_x_side + point_x_front) / 2))
-        # robot_x = float(((robot_x_side + robot_x_front) / 2))
-        lst = [point_x, point_y, point_z]
-        ball = np.array(lst)
-        try:
-            lst = [robot_x, robot_y, robot_z]
-            robot = np.array(lst)
-        except ValueError:
-            print(point_x, point_y, point_z, "Robot:", robot_x, robot_y, robot_z)
+        ball = np.array([point_x, point_y, point_z])
+        robot = np.array([robot_x, robot_y, robot_z])
 
         if ball.shape[0] != 3 or robot.shape[0] != 3:
             print("Fatal error shapes ball", ball.shape, "robot", robot.shape)
+            raise NotImplementedError
 
         velocity = robot_obs[3:]
         robot_obs = np.concatenate([robot, velocity])
