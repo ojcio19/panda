@@ -162,6 +162,37 @@ class PyBullet:
             rgb_array = np.reshape(rgb_array, (height, width, 4))
             rgb_array = rgb_array[:90, 20:-20, :3]
             return rgb_array
+        if mode == "side":
+            width = 240
+            height = 180
+            view_matrix = p.computeViewMatrixFromYawPitchRoll(
+                cameraTargetPosition=(0.0, 0.00, 0.00),
+                distance=0.7,
+                yaw=0,
+                pitch=0,
+                roll=0,
+                upAxisIndex=2,
+            )
+            proj_matrix = p.computeProjectionMatrixFOV(
+                fov=60, aspect=float(width) / height, nearVal=0.1, farVal=100.0
+            )
+            (_, _, px, depth, _) = p.getCameraImage(
+                width=width,
+                height=height,
+                viewMatrix=view_matrix,
+                projectionMatrix=proj_matrix,
+                # lightDirection=[1.0, -0.9, 2.0],
+                # lightColor=[1.0, 1.0, 1.0],
+                # lightDistance=1,
+                # lightAmbientCoeff=0.3,
+                # lightDiffuseCoeff=0.7,
+                # lightSpecularCoeff=0.7,
+            )
+
+            rgb_array = np.array(px, dtype=np.uint8)
+            rgb_array = np.reshape(rgb_array, (height, width, 4))
+            rgb_array = rgb_array[:90, 20:-20, :3]
+            return rgb_array
         if mode == "point_front":
             width = 240
             height = 180
