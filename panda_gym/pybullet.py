@@ -232,7 +232,7 @@ class PyBullet:
                 result_robot = robot_points[0][index], robot_points[1][index]
 
             self.previous_x_robot = result_robot[1]
-            shifted_robot = -1 * (np.mean(result_robot[0]) - 45) / 200, (np.mean(result_robot[1]) - 100) / 200
+            shifted_robot = -1 * (np.mean(result_robot[0]) - 45) / 200, (np.mean(result_robot[1]) - 100 + 2) / 200
             ''''''''''''''''''''''''
             if result_ball[0].size == 0 or result_ball[1].size == 0:
                 if self.previous_y_ball == 0.0 or self.previous_x_ball == 0.0:
