@@ -94,8 +94,8 @@ class RobotTaskEnv(gym.GoalEnv):
         robot_obs = self.robot.get_obs()  # robot state
         task_obs = self.task.get_obs()  # object position, velococity, etc...
 
-        point_y, point_z, robot_y, robot_z = self.sim.render(mode="point_side")
-        _, point_x, _, robot_x = self.sim.render(mode="point_front")
+        point_y, point_z, robot_y, robot_z = self.sim.target_locator.get_point_side()
+        _, point_x, _, robot_x = self.sim.target_locator.get_point_front()
 
         ball = np.array([point_z, point_x, point_y])
         robot = np.array([robot_z, robot_x, robot_y])

@@ -21,14 +21,14 @@ import os
 #              [128, 64, 32]]
 
 # model_types = [DDPG, SAC, TD3]
-model_type = TD3
-net_arch = [64, 64, 64]
+model_type = SAC
+net_arch = [256, 256, 256]
 #for net_arch in net_archs:
 
-for i in range(1, 11):
+for i in range(1, 2):
     # DEFINE PARAMETERS
-    learning_rate = 0.0072044 #0.002
-    gamma = 0.9581808
+    learning_rate = 0.0069578 #0.002
+    gamma = 0.9520242
     arch_values = str(net_arch)
     env = gym.make("PandaReach-v1", render=True)
 
@@ -36,7 +36,7 @@ for i in range(1, 11):
     name_of_model = name.split('.')[2] + '_' + str(i)
 
     policy_kwargs = dict(
-        activation_fn=th.nn.GELU,
+        activation_fn=th.nn.ReLU,
         net_arch=net_arch,
     )
 
@@ -64,7 +64,7 @@ for i in range(1, 11):
 
     # LEARNING
     print("Starting learning, model =", name_of_model)
-    timesteps = 15000
+    timesteps = 8000
     start = time.time()
     model.learn(timesteps)
     end = time.time()
@@ -81,7 +81,7 @@ for i in range(1, 11):
 
     time_nam = name_of_model + "_time"
     # TRANSFER RESULTS TO CSV
-
+    '''
     if os.path.exists("result.csv"):
         df = pandas.read_csv("result.csv", sep=';')
         df[name_of_model] = result
@@ -91,7 +91,7 @@ for i in range(1, 11):
         df = pandas.DataFrame(data={name_of_model: result})
         df[time_nam] = model.time_measured
         df.to_csv("result.csv", sep=';', index=False)
-
+    '''
     #
     # # SAVE MODEL
     # model.save('reach_her_model')
