@@ -71,8 +71,7 @@ class PyBulletRobot:
 
 
 class RobotTaskEnv(gym.GoalEnv):
-
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render.modes": ["human", "rgb_array", "point_front", "point_side"]}
 
     def __init__(self, seed=None):
         obs = self.reset()
@@ -94,16 +93,29 @@ class RobotTaskEnv(gym.GoalEnv):
     def _get_obs(self):
         robot_obs = self.robot.get_obs()  # robot state
         task_obs = self.task.get_obs()  # object position, velococity, etc...
+
+        point_y, point_z, robot_y, robot_z = self.sim.target_locator.get_point_side()
+        _, point_x, _, robot_x = self.sim.target_locator.get_point_front()
+
+        ball = np.array([point_z, point_x, point_y])
+        robot = np.array([robot_z, robot_x, robot_y])
+
+        if ball.shape[0] != 3 or robot.shape[0] != 3:
+            print("Fatal error shapes ball", ball.shape, "robot", robot.shape)
+            raise NotImplementedError
+
+        velocity = robot_obs[3:]
+        robot_obs = np.concatenate([robot, velocity])
+
         observation = np.concatenate([robot_obs, task_obs])
-        
+
         achieved_goal = self.task.get_achieved_goal()
 
-        # front_frame = self.sim.render(
-        #     width=300, height=200, camera_name='external_camera_0', depth=False)
+        #print("robot_obs[0:3]:", self.robot.get_obs()[0:3], "robot:", robot)
         return {
             "observation": observation,
             "achieved_goal": achieved_goal,
-            "desired_goal": self.task.get_goal(),
+            "desired_goal": ball,  # self.task.get_goal(),
         }
 
     def reset(self):
@@ -119,11 +131,11 @@ class RobotTaskEnv(gym.GoalEnv):
         done = False
         info = {
             "is_success": self.task.is_success(
-                obs["achieved_goal"], self.task.get_goal()
+                obs["achieved_goal"], obs["desired_goal"]  # self.task.get_goal()
             ),
         }
         reward = self.task.compute_reward(
-            obs["achieved_goal"], self.task.get_goal(), info
+            obs["achieved_goal"], obs["desired_goal"], info  # self.task.get_goal()
         )
         return obs, reward, done, info
 

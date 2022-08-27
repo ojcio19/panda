@@ -53,13 +53,6 @@ class Reach(Task):
     def reset(self):
         self.goal = self._sample_goal()
         self.sim.set_base_pose("target", self.goal, [0, 0, 0, 1])
-        ''' Generating during reset
-        point_x_side, point_y = self.sim.render(mode="point_side")
-        point_x_front, point_z = self.sim.render(mode="point_front")
-        point_x = float(((point_x_side + point_x_front) / 2) + 35)
-        print("x:", point_x, "y:", point_y, "z:", point_z)
-        print(self.goal)
-        '''
 
     def _sample_goal(self):
         """Randomize goal."""

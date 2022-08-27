@@ -5,3 +5,12 @@
 .idea/
 
 /docs/
+
+/panda_gym/__pycache__/
+/panda_gym/envs/__pycache__/
+/panda_gym/envs/robots/__pycache__/
+/panda_gym/envs/tasks/__pycache__/
+
+/examples/*.zip
+
+/examples/*.csv
