@@ -1,4 +1,4 @@
-# panda-gym
+# Photo-based panda gym 
 
 OpenaAI Gym Franka Emika Panda robot environment based on PyBullet.
 
@@ -9,6 +9,23 @@ OpenaAI Gym Franka Emika Panda robot environment based on PyBullet.
 [![codecov](https://codecov.io/gh/qgallouedec/panda-gym/branch/master/graph/badge.svg?token=pv0VdsXByP)](https://codecov.io/gh/qgallouedec/panda-gym)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+## Simulation 
+The main goal of learning the robot is to reach the red ball. This is achieved through an iterative learning process. See sample below:
+`PandaReach`
+![PandaReach-v1](docs/reach.gif)
+
+## Location of object
+In the original implementation, the positions of the ball are retrieved from the environment, while in the following repository, the location of the object is based on two cameras.
+
+`Front`
+![PandaReach-v1](docs/y45_x91.png)
+
+`Side`
+![PandaReach-v1](docs/y45_z100.png)
+
+TargetLocator is placed under following path: panda\panda_gym\pybullet.py
+
+### 
 ## Installation
 
 ### Using PyPI
@@ -26,33 +43,9 @@ pip install -e panda-gym
 
 ## Usage
 
-```python
-import gym
-import panda_gym
+Run reach_her.py script in PyCharm (tested on version 2020.2.3)
 
-env = gym.make('PandaReach-v1', render=True)
-
-obs = env.reset()
-done = False
-while not done:
-    action = env.action_space.sample() # random action
-    obs, reward, done, info = env.step(action)
-
-env.close()
-```
-
-## Environments
-
-|                                  |                                                |
-| :------------------------------: | :--------------------------------------------: |
-|         `PandaReach-v1`          |                 `PandaPush-v1`                 |
-| ![PandaReach-v1](https://raw.githubusercontent.com/qgallouedec/panda-gym/master/docs/reach.gif) |         ![PandaPush-v1](https://raw.githubusercontent.com/qgallouedec/panda-gym/master/docs/push.gif)         |
-|         `PandaSlide-v1`          |             `PandaPickAndPlace-v1`             |
-| ![PandaSlide-v1](https://raw.githubusercontent.com/qgallouedec/panda-gym/master/docs/slide.gif) | ![PandaPickAndPlace-v1](https://raw.githubusercontent.com/qgallouedec/panda-gym/master/docs/pickandplace.gif) |
-|         `PandaStack-v1`          |                                                |
-| ![PandaStack-v1](https://raw.githubusercontent.com/qgallouedec/panda-gym/master/docs/stack.gif) |                                                |
-
-## Citation
+## Citation for panda lib
 
 Cite as
 
