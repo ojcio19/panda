@@ -12,6 +12,11 @@ import pandas
 import numpy as np
 import os
 
+
+
+# model_types = [DDPG, SAC, TD3]
+model_type = SAC # DDPG, SAC, TD3
+net_arch = [256, 256, 256]
 # net_archs = [[64, 64],
 #              [128, 128],
 #              [256, 256],
@@ -19,13 +24,8 @@ import os
 #              [128, 128, 128],
 #              [256, 256, 256],
 #              [128, 64, 32]]
-
-# model_types = [DDPG, SAC, TD3]
-model_type = SAC
-net_arch = [256, 256, 256]
-#for net_arch in net_archs:
-
-for i in range(1, 2):
+ITERATIONS = 3
+for i in range(1, ITERATIONS - 1):
     # DEFINE PARAMETERS
     learning_rate = 0.0069578 #0.002
     gamma = 0.9520242
@@ -81,7 +81,7 @@ for i in range(1, 2):
 
     time_nam = name_of_model + "_time"
     # TRANSFER RESULTS TO CSV
-    '''
+    
     if os.path.exists("result.csv"):
         df = pandas.read_csv("result.csv", sep=';')
         df[name_of_model] = result
@@ -91,13 +91,13 @@ for i in range(1, 2):
         df = pandas.DataFrame(data={name_of_model: result})
         df[time_nam] = model.time_measured
         df.to_csv("result.csv", sep=';', index=False)
-    '''
+    
     #
-    # # SAVE MODEL
-    # model.save('reach_her_model')
-    #
-    # # LOAD SAVED MODEL
-    # model = model_type.load('reach_her_model', env=env)
+    # SAVE MODEL
+    model.save('reach_her_model')
+    
+    # LOAD SAVED MODEL
+    model = model_type.load('reach_her_model', env=env)
 
     # MAKE PREDICTIONS ON LEARNED MODEL
     total_episodes, reward, pred_limit, total_success, sum_time = 0, 0, 0, 0, 0
