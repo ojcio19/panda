@@ -11,16 +11,21 @@ OpenaAI Gym Franka Emika Panda robot environment based on PyBullet.
 
 ## Simulation 
 The main goal of learning the robot is to reach the red ball. This is achieved through an iterative learning process. See sample below:
+
 `PandaReach`
+
 ![PandaReach-v1](docs/reach.gif)
 
 ## Location of object
 In the original implementation, the positions of the ball are retrieved from the environment, while in the following repository, the location of the object is based on two cameras.
 
 `Front`
+
 ![PandaReach-v1](docs/y45_x91.png)
 
+
 `Side`
+
 ![PandaReach-v1](docs/y45_z100.png)
 
 TargetLocator is placed under following path: panda\panda_gym\pybullet.py
